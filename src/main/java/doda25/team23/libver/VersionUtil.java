@@ -1,4 +1,4 @@
-package lib.version;
+package doda25.team23.libver;
 
 import java.io.IOException;
 import java.io.InputStream;
