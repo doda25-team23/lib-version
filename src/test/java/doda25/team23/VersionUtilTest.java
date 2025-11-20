@@ -1,4 +1,4 @@
-package doda25.team23.libver;
+package doda25.team23;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
