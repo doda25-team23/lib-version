@@ -4,7 +4,7 @@
 
     <groupId>doda25.team23</groupId>
     <artifactId>lib-version</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>lib-version</name>
