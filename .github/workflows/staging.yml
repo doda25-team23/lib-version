@@ -1,0 +1,44 @@
+name: Staging lib-version
+
+on:
+  push:
+    branches-ignore:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  prerelease:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          server-id: github
+          server-username: ${{ github.actor }}
+          server-password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Calculate Staging Version
+        id: version
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S) 
+          BRANCH_NAME=$(echo ${{ github.ref_name }} | tr / - | tr _ - | tr '[:upper:]' '[:lower:]')
+          BASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT$//')
+          STAGING_VERSION="${BASE_VERSION}-${BRANCH_NAME}-${TIMESTAMP}"
+          echo "STAGING_VERSION=STAGING_VERSION" >> $GITHUB_ENV
+
+      - name: Set staging project version
+        run: mvn versions:set -DnewVersion=${{ env.STAGING_VERSION }}
+
+      - name: Build and Deploy Pre-Release Package
+        run: mvn deploy
